@@ -1,40 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
-import Papa from 'papaparse';
+
+const url = "https://api.teleport.org/api/cities/?search=porto&limit=1";
 
 const Citys = () => {
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState([
+    { value: 'chocolate', label: '' },  
+    { value: 'vanilla', label: '' },
+    { value: 'chocolate', label: '' },
+    { value: 'strawberry', label: '' }
+  ]);
 
-  const changeHandler = (event) => {
-    const file = event.target.files[0];
+  const fetchCityData = async () => {
+    const response = await fetch(url);
+    const data = await response.json();
 
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        dynamicTyping: true,
-        complete: function (results) {
-          if (results.data && results.data.length > 0) {
-            const updatedOptions = results.data.map((row) => ({
-              value: row.name,
-              label: `${row.name}, ${row.country}`
-            }));
+    const updatedOptions = data._embedded["city:search-results"].map(city => ({
+      label: city.matching_full_name,
+      value: city.matching_alternate_names[0].name
+    }));
 
-            setOptions(updatedOptions);
-          }
-        }
-      });
-    }
+    setOptions(updatedOptions);
   };
+
+  useEffect(() => {
+    // Realiza a primeira busca ao montar o componente
+    fetchCityData();
+
+    // Atualiza a cada intervalo de tempo (por exemplo, a cada 5 segundos)
+    const intervalId = setInterval(() => {
+      fetchCityData();
+    }, 1000);  // 5000 milissegundos = 5 segundos
+
+    // Limpa o intervalo ao desmontar o componente para evitar memory leaks
+    return () => clearInterval(intervalId);
+  }, []);  // O array vazio faz com que o useEffect seja executado apenas uma vez, ao montar o componente
 
   return (
     <div>
-      <input
-        type="file"
-        name="file"
-        accept=".csv"
-        onChange={changeHandler}
-        style={{ display: 'block', margin: '10px auto' }}
-      />
       <Select options={options} />
     </div>
   );
