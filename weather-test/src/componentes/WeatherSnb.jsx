@@ -35,7 +35,6 @@ const WeatherSnb = () => {
 
   return (
     <div>
-    <Citys />
     <button onClick={infos2}>Gramado</button>
     <button onClick={infos}>Porto Alegre</button>
     <h1 id='temp' ></h1>
