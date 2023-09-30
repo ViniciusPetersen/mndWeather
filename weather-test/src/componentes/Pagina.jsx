@@ -1,9 +1,66 @@
-import React from "react";
+import React, { useEffect,useState } from 'react';
+import Citys from './Citys';
+const current1 = 'https://api.weatherapi.com/v1/current.json?key=c3489276aee74fcf883184752232509&q='
+const forecast = 'https://api.weatherapi.com/v1/forecast.json?key=c3489276aee74fcf883184752232509&q=Porto Alegre&days=10&aqi=no&alerts=no'
+
+function convertTo24HourFormat(time) {
+  const [hourMinute, ampm] = time.split(' ');
+  const [hour, minute] = hourMinute.split(':');
+
+  if (ampm.toLowerCase() === 'pm' && hour !== '12') {
+    return `${parseInt(hour, 10) + 12}:${minute}`;
+  } else if (ampm.toLowerCase() === 'am' && hour === '12') {
+    return `00:${minute}`;
+  } else {
+    return `${hour.padStart(2, '0')}:${minute}`;
+  }
+}
+
+function formatToBrazilianTime(time24h) {
+  const [hour, minute] = time24h.split(':');
+  return `${hour.padStart(2, '0')}h${minute}`;
+}
+
+async function infos(cidade){
+  console.log("oi")
+  const response = await fetch(current1+cidade+"&aqi=no");
+  const response2 = await fetch(forecast+cidade+"&days=10&aqi=no&alerts=no");
+  var data = await response.json();
+  var data2 = await response2.json();
+  console.log(data);
+  console.log(data2);
+
+  const sunriseTime= data2.forecast.forecastday[0].astro.sunrise;
+  const sunriseTime24h = convertTo24HourFormat(sunriseTime);
+  document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
+  
+
+ document.getElementById('tempAtu').innerHTML = data.current.temp_c+"°C";
+
+  document.getElementById('sunset').innerHTML = data2.forecast.forecastday[0].astro.sunset;
+  document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
+  document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
+  document.getElementById('humidade').innerHTML = data.current.humidity+"%";
+  document.getElementById('sensTermic').innerHTML = data.current.feelslike_c+"°C";
+  document.getElementById('pressAtm').innerHTML = data.current.pressure_mb+"hPa";
+  document.getElementById('precip').innerHTML = data.current.precip_mm+"mm";
+  
+ /* document.getElementById('dia').innerHTML = data.current.last_updated;
+  document.getElementById('cidade').innerHTML = data.location.name;
+  document.getElementById('clima').innerHTML = data.current.condition.text;*/
+
+}
+
 
 export const Pagina = () => {
+  
+  const handleValueChange = (value)=>{
+    console.log(value.name);
+    infos(value.name);
+  };
   return (
     <div className="ensolarado">
-      <div className="div">
+      
         <div className="overlap">
             
           <div className="text-wrapper">DOMINGO</div>
@@ -35,11 +92,12 @@ export const Pagina = () => {
             <div className="rectangle" />
           </div>
           <div className="overlap-2">
+            
             <img className="por-do-sol" alt="Por do sol" src="/img/por-do-sol-1.png" />
             <div className="text-wrapper-17">Pôr do Sol</div>
-            <div className="text-wrapper-18">18:55</div>
+            <div className="text-wrapper-18" id="sunset">18:55</div>
             <div className="text-wrapper-19">Nascer do Sol</div>
-            <div className="text-wrapper-20">6:16</div>
+            <div className="text-wrapper-20" id="sunrise">6:16</div>
             <div className="text-wrapper-21">65%</div>
             <div className="text-wrapper-22">Humidade</div>
             <div className="text-wrapper-23">Velocidade do Vento</div>
@@ -66,6 +124,7 @@ export const Pagina = () => {
           <div className="text-wrapper-35">20°C</div>
           <div className="text-wrapper-36">14°C - 22°C</div>
         </div>
+        
         <div className="overlap-group-2">
         <img className="ezgif" alt="Ezgif" src="/img/ezgif-1-72a0b36487-1.gif" />
           <div className="text-wrapper-37">Mother Nature’s Mood</div>
@@ -127,14 +186,15 @@ export const Pagina = () => {
           <div className="text-wrapper-66">15°C</div>
           <div className="text-wrapper-67">14°C</div>
           <div className="text-wrapper-68">15°C</div>
-          <div className="text-wrapper-69">20°C</div>
+          <div className="text-wrapper-69"id="tempAtu">20°C</div>
           <img className="sol-3" alt="Sol" src="/img/sol-2-1.png" />
           
           <img className="rectangle-3" alt="Rectangle" src="/img/rectangle-12.svg" />
           <img className="icon-search" alt="Icon search" src="/img/icon-search.png" />
           <div className="porto-alegre-RS">Porto Alegre, RS,&nbsp;&nbsp;Brasil</div>
         </div>
-      </div>
+        <Citys onValueChange={handleValueChange} />
+        
     </div>
   );
 };
