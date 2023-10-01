@@ -1,7 +1,8 @@
 import React, { useEffect,useState } from 'react';
 import Citys from './Citys';
+import Graph from './Graph';
 const current1 = 'https://api.weatherapi.com/v1/current.json?key=c3489276aee74fcf883184752232509&q='
-const forecast = 'https://api.weatherapi.com/v1/forecast.json?key=c3489276aee74fcf883184752232509&q=Porto Alegre&days=10&aqi=no&alerts=no'
+const forecast = 'https://api.weatherapi.com/v1/forecast.json?key=c3489276aee74fcf883184752232509&q='
 
 function convertTo24HourFormat(time) {
   const [hourMinute, ampm] = time.split(' ');
@@ -18,7 +19,7 @@ function convertTo24HourFormat(time) {
 
 function formatToBrazilianTime(time24h) {
   const [hour, minute] = time24h.split(':');
-  return `${hour.padStart(2, '0')}h${minute}`;
+  return `${hour.padStart(2, '0')}:${minute}`;
 }
 
 async function infos(cidade){
@@ -29,21 +30,23 @@ async function infos(cidade){
   var data2 = await response2.json();
   console.log(data);
   console.log(data2);
-
-  const sunriseTime= data2.forecast.forecastday[0].astro.sunrise;
+  const sunsetTime = data2.forecast.forecastday[0].astro.sunset;
+  const sunriseTime = data2.forecast.forecastday[0].astro.sunrise;
   const sunriseTime24h = convertTo24HourFormat(sunriseTime);
+  const sunsetTime24h = convertTo24HourFormat(sunsetTime);
+  
+  document.getElementById('sunset').innerHTML = formatToBrazilianTime(sunsetTime24h);
   document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
   
 
- document.getElementById('tempAtu').innerHTML = data.current.temp_c+"°C";
-
-  document.getElementById('sunset').innerHTML = data2.forecast.forecastday[0].astro.sunset;
+  document.getElementById('tempAtu').innerHTML = Math.floor(data.current.temp_c)+"°C";
   document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
   document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
   document.getElementById('humidade').innerHTML = data.current.humidity+"%";
-  document.getElementById('sensTermic').innerHTML = data.current.feelslike_c+"°C";
+  document.getElementById('sensTermic').innerHTML = Math.floor(data.current.feelslike_c)+"°C";
   document.getElementById('pressAtm').innerHTML = data.current.pressure_mb+"hPa";
   document.getElementById('precip').innerHTML = data.current.precip_mm+"mm";
+  document.getElementById('mintemp').innerHTML = "Min.: "+data2.forecast.forecastday[0].day.mintemp_c+"°C"+" - Max.:"+data2.forecast.forecastday[0].day.maxtemp_c+"°C";
   
  /* document.getElementById('dia').innerHTML = data.current.last_updated;
   document.getElementById('cidade').innerHTML = data.location.name;
@@ -98,10 +101,10 @@ export const Pagina = () => {
             <div className="text-wrapper-18" id="sunset">18:55</div>
             <div className="text-wrapper-19">Nascer do Sol</div>
             <div className="text-wrapper-20" id="sunrise">6:16</div>
-            <div className="text-wrapper-21">65%</div>
+            <div className="text-wrapper-21" id="humidade">65%</div>
             <div className="text-wrapper-22">Humidade</div>
             <div className="text-wrapper-23">Velocidade do Vento</div>
-            <div className="text-wrapper-24">5 km/h</div>
+            <div className="text-wrapper-24" id="ventoV">5 km/h</div>
             <img className="rectangle-2" alt="Rectangle" src="/img/rectangle-11.svg" />
             <img className="sunrise-alt" alt="Sunrise alt" src="/img/sunrise-alt-3.png" />
             <img className="pipeline" alt="Pipeline" src="/img/pipeline-1-2.png" />
@@ -111,13 +114,13 @@ export const Pagina = () => {
             <img className="low-vision" alt="Low vision" src="/img/low-vision-2.png" />
             <img className="humidity" alt="Humidity" src="/img/humidity-2.png" />
             <div className="text-wrapper-25">Visibilidade</div>
-            <div className="text-wrapper-26">4 km</div>
+            <div className="text-wrapper-26" id="visibili">4 km</div>
             <div className="text-wrapper-27">Precipitação</div>
-            <div className="text-wrapper-28">8%</div>
+            <div className="text-wrapper-28" id="precip">8%</div>
             <div className="text-wrapper-29">Pressão Atmosférica</div>
-            <div className="text-wrapper-30">1013 hPa</div>
+            <div className="text-wrapper-30" id="pressAtm">1013 hPa</div>
             <div className="text-wrapper-31">Sensação Térmica</div>
-            <div className="text-wrapper-32">20°C</div>
+            <div className="text-wrapper-32" id="sensTermic">20°C</div>
           </div>
           <div className="text-wrapper-33">QUINTA</div>
           <div className="text-wrapper-34">20/05</div>
@@ -128,66 +131,10 @@ export const Pagina = () => {
         <div className="overlap-group-2">
         <img className="ezgif" alt="Ezgif" src="/img/ezgif-1-72a0b36487-1.gif" />
           <div className="text-wrapper-37">Mother Nature’s Mood</div>
-          <p className="p">Mín.: 14°C - Máx.: 22°C</p>
-          <img className="line-4" alt="Line" src="/img/line-6.svg" />
-          <div className="text-wrapper-38">Agora</div>
-          <div className="element">01:00</div>
-          <div className="text-wrapper-39">02:00</div>
-          <div className="text-wrapper-40">03:00</div>
-          <div className="text-wrapper-41">04:00</div>
-          <div className="text-wrapper-42">05:00</div>
-          <div className="text-wrapper-43">06:00</div>
-          <div className="text-wrapper-44">07:00</div>
-          <div className="text-wrapper-45">08:00</div>
-          <div className="text-wrapper-46">09:00</div>
-          <div className="text-wrapper-47">10:00</div>
-          <div className="text-wrapper-48">11:00</div>
-          <div className="text-wrapper-49">12:00</div>
-          <div className="text-wrapper-50">13:00</div>
-          <div className="text-wrapper-51">14:00</div>
-          <div className="text-wrapper-52">15:00</div>
-          <div className="text-wrapper-53">16:00</div>
-          <div className="text-wrapper-54">17:00</div>
-          <div className="text-wrapper-55">18:00</div>
-          <div className="text-wrapper-56">19:00</div>
-          <div className="text-wrapper-57">20:00</div>
-          <div className="text-wrapper-58">21:00</div>
-          <div className="text-wrapper-59">22:00</div>
-          <div className="text-wrapper-60">23:00</div>
-          <div className="ellipse" />
-          <div className="ellipse-2" />
-          <div className="ellipse-3" />
-          <div className="ellipse-4" />
-          <div className="ellipse-5" />
-          <div className="ellipse-6" />
-          <div className="ellipse-7" />
-          <div className="ellipse-8" />
-          <div className="ellipse-9" />
-          <div className="ellipse-10" />
-          <div className="ellipse-11" />
-          <div className="ellipse-12" />
-          <div className="ellipse-13" />
-          <div className="ellipse-14" />
-          <div className="ellipse-15" />
-          <div className="ellipse-16" />
-          <div className="ellipse-17" />
-          <div className="ellipse-18" />
-          <div className="ellipse-19" />
-          <div className="ellipse-20" />
-          <div className="ellipse-21" />
-          <div className="ellipse-22" />
-          <div className="ellipse-23" />
-          <div className="ellipse-24" />
-          <div className="text-wrapper-61">14°C</div>
-          <div className="text-wrapper-62">17°C</div>
-          <div className="text-wrapper-63">18°C</div>
-          <div className="text-wrapper-64">18°C</div>
-          <div className="text-wrapper-65">17°C</div>
-          <div className="text-wrapper-66">15°C</div>
-          <div className="text-wrapper-67">14°C</div>
-          <div className="text-wrapper-68">15°C</div>
+          <div className="p" id="mintemp">Mín.: 14°C - Máx.: 22°C</div>
+          <Graph />
           <div className="text-wrapper-69"id="tempAtu">20°C</div>
-          <img className="sol-3" alt="Sol" src="/img/sol-2-1.png" />
+          <img className="sol-3" id="climaAtu" alt="Sol" src="/img/sol-2-1.png" />
           
           <img className="rectangle-3" alt="Rectangle" src="/img/rectangle-12.svg" />
           <img className="icon-search" alt="Icon search" src="/img/icon-search.png" />
