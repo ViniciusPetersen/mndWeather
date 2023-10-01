@@ -22,6 +22,50 @@ function formatToBrazilianTime(time24h) {
   return `${hour.padStart(2, '0')}:${minute}`;
 }
 
+
+function categorizeWeatherCondition(conditionText) {
+  // Condições de clima sem nuvem
+  var clearConditions = ["Clear", "Sunny"];
+
+  // Condições de clima com poucas nuvens
+  var partlyCloudyConditions = ["Partly cloudy"];
+
+  // Condições de clima com muitas nuvens
+  var cloudyConditions = ["Cloudy", "Overcast"];
+
+  // Condições de chuva
+  var rainConditions = ["Rain", "Light rain", "Moderate rain", "Heavy rain", "Showers", "Light showers", "Moderate showers", "Heavy showers"];
+
+  // Condições de neve
+  var snowConditions = ["Snow", "Light snow", "Moderate snow", "Heavy snow"];
+
+  // Condições de trovão
+  var thunderstormConditions = ["Thunderstorms"];
+
+  // Verifica a categoria da condição do clima
+  if (clearConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/sol (4).png";
+  } else if (partlyCloudyConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/sol-nuvem-2.png";
+  } else if (cloudyConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/new-cloud.jpeg";
+  } else if (rainConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/cloud-rain-1-2.png";
+  } else if (snowConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/new-snow.jpeg";
+  } else if (thunderstormConditions.includes(conditionText)) {
+    document.getElementById('climaAtu').src = "/img/trovoada-4.png";
+  } else {
+      return "Outro";
+  }
+}
+
+function scrollToTop() {
+  const conteudo = document.getElementById('overlap');
+  conteudo.scrollTop = 0;
+}
+const temperaturas = [];
+
 async function infos(cidade){
   console.log("oi")
   const response = await fetch(current1+cidade+"&aqi=no");
@@ -34,19 +78,37 @@ async function infos(cidade){
   const sunriseTime = data2.forecast.forecastday[0].astro.sunrise;
   const sunriseTime24h = convertTo24HourFormat(sunriseTime);
   const sunsetTime24h = convertTo24HourFormat(sunsetTime);
+
+  const horas = 24;  // Total de horas que queremos armazenar
+
+// Obter a hora atual
+const horaAtual = new Date().getHours();
+
+for (let i = 0; i < horas; i++) {
+  // Calcular o índice correspondente à hora
+  const indiceHora = (horaAtual + i) % 24;
+
+  // Obter a temperatura para a hora atual
+  const temperaturaAtual = Math.round(data2.forecast.forecastday[0].hour[indiceHora].temp_c);
+
+  // Armazenar a temperatura no array
+  temperaturas.push(temperaturaAtual);
+}
+
+console.log('Temperaturas para as próximas 24 horas:', temperaturas);
   
   document.getElementById('sunset').innerHTML = formatToBrazilianTime(sunsetTime24h);
   document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
-  
-
-  document.getElementById('tempAtu').innerHTML = Math.floor(data.current.temp_c)+"°C";
+  var conditionText = data.current.condition.text;  // Obtém o texto da condição do clima da sua API
+  categorizeWeatherCondition(conditionText);
+  document.getElementById('tempAtu').innerHTML = Math.round(data.current.temp_c)+"°C";
   document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
   document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
   document.getElementById('humidade').innerHTML = data.current.humidity+"%";
-  document.getElementById('sensTermic').innerHTML = Math.floor(data.current.feelslike_c)+"°C";
+  document.getElementById('sensTermic').innerHTML = Math.round(data.current.feelslike_c)+"°C";
   document.getElementById('pressAtm').innerHTML = data.current.pressure_mb+"hPa";
   document.getElementById('precip').innerHTML = data.current.precip_mm+"mm";
-  document.getElementById('mintemp').innerHTML = "Min.: "+data2.forecast.forecastday[0].day.mintemp_c+"°C"+" - Max.:"+data2.forecast.forecastday[0].day.maxtemp_c+"°C";
+  document.getElementById('mintemp').innerHTML = "Min.: "+Math.round(data2.forecast.forecastday[0].day.mintemp_c)+"°C"+" - Max.:"+Math.round(data2.forecast.forecastday[0].day.maxtemp_c)+"°C";
   
  /* document.getElementById('dia').innerHTML = data.current.last_updated;
   document.getElementById('cidade').innerHTML = data.location.name;
@@ -56,16 +118,22 @@ async function infos(cidade){
 
 
 export const Pagina = () => {
-  
+  const [temperaturasA, setTemperaturasA] = useState([]);
   const handleValueChange = (value)=>{
     console.log(value.name);
     infos(value.name);
   };
+  useEffect(() => { 
+    const conteudo = document.getElementById('overlap');
+    conteudo.scrollTop = 0;
+    setTemperaturasA(temperaturas);
+  }, []);
+  
   return (
     <div className="ensolarado">
       
-        <div className="overlap">
-            
+        <div className="overlap" >
+          <div id="overlap">
           <div className="text-wrapper">DOMINGO</div>
           <div className="text-wrapper-2">16/05</div>
           <img className="line" alt="Line" src="/img/line-2.svg" />
@@ -93,6 +161,7 @@ export const Pagina = () => {
           <img className="sol-2" alt="Sol" src="/img/sol-2.png" />
           <div className="overlap-group">
             <div className="rectangle" />
+          </div>
           </div>
           <div className="overlap-2">
             
@@ -132,7 +201,7 @@ export const Pagina = () => {
         <img className="ezgif" alt="Ezgif" src="/img/ezgif-1-72a0b36487-1.gif" />
           <div className="text-wrapper-37">Mother Nature’s Mood</div>
           <div className="p" id="mintemp">Mín.: 14°C - Máx.: 22°C</div>
-          <Graph />
+          <Graph temperaturas={temperaturasA}/>
           <div className="text-wrapper-69"id="tempAtu">20°C</div>
           <img className="sol-3" id="climaAtu" alt="Sol" src="/img/sol-2-1.png" />
           
