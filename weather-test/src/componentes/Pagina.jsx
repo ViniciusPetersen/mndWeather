@@ -23,7 +23,8 @@ function formatToBrazilianTime(time24h) {
 }
 
 
-function categorizeWeatherCondition(conditionText) {
+function categorizeWeatherCondition(conditionText,isNoite) {
+  console.log(isNoite);
   // Condições de clima sem nuvem
   var clearConditions = ["Clear", "Sunny"];
 
@@ -44,17 +45,57 @@ function categorizeWeatherCondition(conditionText) {
 
   // Verifica a categoria da condição do clima
   if (clearConditions.includes(conditionText)) {
-    document.getElementById('climaAtu').src = "/img/sol (4).png";
+    if(isNoite==1){document.getElementById('fundo').style.background = ' linear-gradient(180deg, rgb(136, 187, 241) 0%, rgb(89, 126, 213) 54.17%)';
+    document.getElementById('climaAtu').src = "/img/sol-2-1.png";
+    document.getElementById('sol').src = "/img/solgif.gif"; 
+    document.getElementById('fundo2').style.backgroundColor = '#597cd6';
+    document.getElementById('sol').style.opacity = '25%'; }
+    else{ 
+    document.getElementById('fundo').style.background = ' linear-gradient(180deg, rgb(26, 94, 166) 0%, rgb(15, 56, 106) 50%, rgb(7, 23, 59) 100%)';
+    document.getElementById('climaAtu').src = "/img/estrelas-da-lua (3).png";
+    document.getElementById('sol').src = "/img/noitegif.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#0c225ab2';
+    document.getElementById('sol').style.opacity = '35%';}
   } else if (partlyCloudyConditions.includes(conditionText)) {
-    document.getElementById('climaAtu').src = "/img/sol-nuvem-2.png";
+    if(isNoite==1){document.getElementById('fundo').style.background = ' linear-gradient(180deg, rgb(136, 187, 241) 0%, rgb(89, 126, 213) 54.17%)';
+    document.getElementById('climaAtu').src = "/img/nuvens-sol-1-1.png";
+    document.getElementById('sol').src = "/img/perfectcloud-1.gif"; 
+    document.getElementById('fundo2').style.backgroundColor = '#597cd6';
+    document.getElementById('sol').style.opacity = '25%'; }
+    else {document.getElementById('fundo').style.background = ' linear-gradient(180deg, rgb(26, 94, 166) 0%, rgb(15, 56, 106) 50%, rgb(7, 23, 59) 100%)';
+    document.getElementById('climaAtu').src = "/img/estrelas-da-lua (3).png";
+    document.getElementById('sol').src = "/img/noitegif.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#0c225ab2';
+    document.getElementById('sol').style.opacity = '35%';}
   } else if (cloudyConditions.includes(conditionText)) {
-    document.getElementById('climaAtu').src = "/img/new-cloud.jpeg";
+    if(isNoite==1){document.getElementById('fundo').style.background = 'linear-gradient(180deg,rgb(155.23, 161.27, 167.66) 0%,rgb(63.39, 67.25, 72.04) 50%,rgb(49.58, 51.21, 55.04) 100%';
+    document.getElementById('climaAtu').src = "/img/nuvens-1-2.png";
+    document.getElementById('sol').src = "/img/perfectcloud-1.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#616161b2';
+    document.getElementById('sol').style.opacity = '35%';}
+    else {document.getElementById('fundo').style.background = ' linear-gradient(180deg, rgb(26, 94, 166) 0%, rgb(15, 56, 106) 50%, rgb(7, 23, 59) 100%)';
+    document.getElementById('climaAtu').src = "/img/estrelas-da-lua (3).png";
+    document.getElementById('sol').src = "/img/noitegif.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#0c225ab2';
+    document.getElementById('sol').style.opacity = '35%';}
   } else if (rainConditions.includes(conditionText)) {
+    document.getElementById('fundo').style.background = 'linear-gradient(180deg,rgb(155.23, 161.27, 167.66) 0%,rgb(63.39, 67.25, 72.04) 50%,rgb(49.58, 51.21, 55.04) 100%';
     document.getElementById('climaAtu').src = "/img/cloud-rain-1-2.png";
+    document.getElementById('sol').src = "/img/chuvagif2.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#303236b2';
+    document.getElementById('sol').style.opacity = '30%'; 
   } else if (snowConditions.includes(conditionText)) {
-    document.getElementById('climaAtu').src = "/img/new-snow.jpeg";
+    document.getElementById('fundo').style.background = 'linear-gradient(180deg,  rgb(255, 255, 255) 0%,  rgb(217.9, 217.97, 218.06) 0.01%, rgb(129.08, 129.33, 129.62) 58.33%,rgb(0, 0, 0) 100%)';
+    document.getElementById('climaAtu').src = "/img/flocos-de-neve.png";
+    document.getElementById('sol').src = "/img/nevegif.gif"; 
+    document.getElementById('fundo2').style.backgroundColor = '#6b6767b2';
+    document.getElementById('sol').style.opacity = '20%'; 
   } else if (thunderstormConditions.includes(conditionText)) {
-    document.getElementById('climaAtu').src = "/img/trovoada-4.png";
+    ocument.getElementById('fundo').style.background = 'linear-gradient(180deg,rgb(155.23, 161.27, 167.66) 0%,rgb(63.39, 67.25, 72.04) 50%,rgb(49.58, 51.21, 55.04) 100%';
+    document.getElementById('climaAtu').src = "/img/trovoada-2-1.png";
+    document.getElementById('sol').src = "/img/trovao.gif";
+    document.getElementById('fundo2').style.backgroundColor = '#303236b2';
+    document.getElementById('sol').style.opacity = '30%'; 
   } else {
       return "Outro";
   }
@@ -100,8 +141,9 @@ export const Pagina = () => {
       
       document.getElementById('sunset').innerHTML = formatToBrazilianTime(sunsetTime24h);
       document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
-      var conditionText = data.current.condition.text;  // Obtém o texto da condição do clima da sua API
-      categorizeWeatherCondition(conditionText);
+      var conditionText = data.current.condition.text;
+      var isnoite = data.current.is_day  // Obtém o texto da condição do clima da sua API
+      categorizeWeatherCondition(conditionText,isnoite);
       document.getElementById('tempAtu').innerHTML = Math.round(data.current.temp_c)+"°C";
       document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
       document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
@@ -129,18 +171,18 @@ export const Pagina = () => {
       setTemperaturasA(temperaturas);
     
     }
-    
+
   };
   
  
 const randomKey = Math.random();
   return (
-    <div className="ensolarado">
+    <div className="ensolarado" id="fundo">
       
-        <div className="overlap" >
+        <div className="overlap" id="fundo2" >
           <div id="overlap">
-          <div className="text-wrapper">DOMINGO</div>
-          <div className="text-wrapper-2">16/05</div>
+          <div className="text-wrapper" id="diasem1">DOMINGO</div>
+          <div className="text-wrapper-2"id="dia1">16/05</div>
           <img className="line" alt="Line" src="/img/line-2.svg" />
           <div className="text-wrapper-3">14°C - 22°C</div>
           <div className="text-wrapper-4">20°C</div>
@@ -165,7 +207,7 @@ const randomKey = Math.random();
           <img className="sol" alt="Sol" src="/img/sol-2.png" />
           <img className="sol-2" alt="Sol" src="/img/sol-2.png" />
           <div className="overlap-group">
-            <div className="rectangle" />
+            <div className="rectangle"/>
           </div>
           </div>
           <div className="overlap-2">
@@ -203,7 +245,7 @@ const randomKey = Math.random();
         </div>
            
         <div className="overlap-group-2">        
-        <img className="ezgif" alt="Ezgif" src="/img/ezgif-1-72a0b36487-1.gif" />
+        <img className="ezgif" id="sol" alt="Ezgif" src="/img/solgif.gif" />
           <div className="text-wrapper-37">Mother Nature’s Mood</div>
           <div className="p" id="mintemp">Mín.: 14°C - Máx.: 22°C</div>
           <Graph temperaturas={temperaturasA}  />

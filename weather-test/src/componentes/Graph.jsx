@@ -15,7 +15,7 @@ const Graph = ({ temperaturas }) => {
     const ctx = canvas.getContext('2d');  
 
     // Clear the canvas 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
 
     // Draw the graph
     for (let i = 0; i < 24; i++) {
@@ -30,8 +30,8 @@ const Graph = ({ temperaturas }) => {
       ctx.moveTo(startX, startY);
       ctx.lineTo(endX, endY);
       ctx.strokeStyle = 'white';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      ctx.lineWidth = 0.5;
+      ctx.stroke(); 
     }
     
   }, [temperaturas,minTemperature]);
