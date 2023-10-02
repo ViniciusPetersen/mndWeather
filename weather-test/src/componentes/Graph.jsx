@@ -30,7 +30,7 @@ const Graph = ({ temperaturas }) => {
       ctx.moveTo(startX, startY);
       ctx.lineTo(endX, endY);
       ctx.strokeStyle = 'white';
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 1;
       ctx.stroke(); 
     }
     
