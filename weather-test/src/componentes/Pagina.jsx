@@ -64,57 +64,9 @@ function scrollToTop() {
   const conteudo = document.getElementById('overlap');
   conteudo.scrollTop = 0;
 }
-const temperaturas = [];
+let temperaturas = [];
 
-async function infos(cidade){
-  console.log("oi")
-  const response = await fetch(current1+cidade+"&aqi=no");
-  const response2 = await fetch(forecast+cidade+"&days=10&aqi=no&alerts=no");
-  var data = await response.json();
-  var data2 = await response2.json();
-  console.log(data);
-  console.log(data2);
-  const sunsetTime = data2.forecast.forecastday[0].astro.sunset;
-  const sunriseTime = data2.forecast.forecastday[0].astro.sunrise;
-  const sunriseTime24h = convertTo24HourFormat(sunriseTime);
-  const sunsetTime24h = convertTo24HourFormat(sunsetTime);
 
-  const horas = 24;  // Total de horas que queremos armazenar
-
-// Obter a hora atual
-const horaAtual = new Date().getHours();
-
-for (let i = 0; i < horas; i++) {
-  // Calcular o índice correspondente à hora
-  const indiceHora = (horaAtual + i) % 24;
-
-  // Obter a temperatura para a hora atual
-  const temperaturaAtual = Math.round(data2.forecast.forecastday[0].hour[indiceHora].temp_c);
-
-  // Armazenar a temperatura no array
-  temperaturas.push(temperaturaAtual);
-}
-
-console.log('Temperaturas para as próximas 24 horas:', temperaturas);
-  
-  document.getElementById('sunset').innerHTML = formatToBrazilianTime(sunsetTime24h);
-  document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
-  var conditionText = data.current.condition.text;  // Obtém o texto da condição do clima da sua API
-  categorizeWeatherCondition(conditionText);
-  document.getElementById('tempAtu').innerHTML = Math.round(data.current.temp_c)+"°C";
-  document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
-  document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
-  document.getElementById('humidade').innerHTML = data.current.humidity+"%";
-  document.getElementById('sensTermic').innerHTML = Math.round(data.current.feelslike_c)+"°C";
-  document.getElementById('pressAtm').innerHTML = data.current.pressure_mb+"hPa";
-  document.getElementById('precip').innerHTML = data.current.precip_mm+"mm";
-  document.getElementById('mintemp').innerHTML = "Min.: "+Math.round(data2.forecast.forecastday[0].day.mintemp_c)+"°C"+" - Max.:"+Math.round(data2.forecast.forecastday[0].day.maxtemp_c)+"°C";
-  
- /* document.getElementById('dia').innerHTML = data.current.last_updated;
-  document.getElementById('cidade').innerHTML = data.location.name;
-  document.getElementById('clima').innerHTML = data.current.condition.text;*/
-
-}
 
 
 export const Pagina = () => {
@@ -122,13 +74,66 @@ export const Pagina = () => {
   const handleValueChange = (value)=>{
     console.log(value.name);
     infos(value.name);
+    
+    console.log('Temperaturas para as próximas 24 horas:', temperaturas);
+
+    async function infos(cidade){
+      temperaturas = [];
+      console.log("oi")
+      const response = await fetch(current1+cidade+"&aqi=no");
+      const response2 = await fetch(forecast+cidade+"&days=10&aqi=no&alerts=no");
+      var data = await response.json();
+      var data2 = await response2.json();
+      console.log(data);
+      console.log(data2);
+      const sunsetTime = data2.forecast.forecastday[0].astro.sunset;
+      const sunriseTime = data2.forecast.forecastday[0].astro.sunrise;
+      const sunriseTime24h = convertTo24HourFormat(sunriseTime);
+      const sunsetTime24h = convertTo24HourFormat(sunsetTime);
+    
+      const horas = 24;  // Total de horas que queremos armazenar
+    
+    // Obter a hora atual
+    
+    
+    
+      
+      document.getElementById('sunset').innerHTML = formatToBrazilianTime(sunsetTime24h);
+      document.getElementById('sunrise').innerHTML = formatToBrazilianTime(sunriseTime24h);
+      var conditionText = data.current.condition.text;  // Obtém o texto da condição do clima da sua API
+      categorizeWeatherCondition(conditionText);
+      document.getElementById('tempAtu').innerHTML = Math.round(data.current.temp_c)+"°C";
+      document.getElementById('visibili').innerHTML = data.current.vis_km+"Km";
+      document.getElementById('ventoV').innerHTML = data.current.wind_kph+"Km/h";
+      document.getElementById('humidade').innerHTML = data.current.humidity+"%";
+      document.getElementById('sensTermic').innerHTML = Math.round(data.current.feelslike_c)+"°C";
+      document.getElementById('pressAtm').innerHTML = data.current.pressure_mb+"hPa";
+      document.getElementById('precip').innerHTML = data.current.precip_mm+"mm";
+      document.getElementById('mintemp').innerHTML = "Min.: "+Math.round(data2.forecast.forecastday[0].day.mintemp_c)+"°C"+" - Max.:"+Math.round(data2.forecast.forecastday[0].day.maxtemp_c)+"°C";
+      
+     /* document.getElementById('dia').innerHTML = data.current.last_updated;
+      document.getElementById('cidade').innerHTML = data.location.name;
+      document.getElementById('clima').innerHTML = data.current.condition.text;*/
+      const horaAtual = new Date().getHours();
+    
+      for (let i = 0; i < horas; i++) {
+        // Calcular o índice correspondente à hora
+        const indiceHora = (horaAtual + i) % 24;
+      
+        // Obter a temperatura para a hora atual
+        const temperaturaAtual = Math.round(data2.forecast.forecastday[0].hour[indiceHora].temp_c);
+      
+        // Armazenar a temperatura no array
+        temperaturas.push(temperaturaAtual);
+      }
+      setTemperaturasA(temperaturas);
+    
+    }
+    
   };
-  useEffect(() => { 
-    const conteudo = document.getElementById('overlap');
-    conteudo.scrollTop = 0;
-    setTemperaturasA(temperaturas);
-  }, []);
   
+ 
+const randomKey = Math.random();
   return (
     <div className="ensolarado">
       
@@ -196,12 +201,12 @@ export const Pagina = () => {
           <div className="text-wrapper-35">20°C</div>
           <div className="text-wrapper-36">14°C - 22°C</div>
         </div>
-        
-        <div className="overlap-group-2">
+           
+        <div className="overlap-group-2">        
         <img className="ezgif" alt="Ezgif" src="/img/ezgif-1-72a0b36487-1.gif" />
           <div className="text-wrapper-37">Mother Nature’s Mood</div>
           <div className="p" id="mintemp">Mín.: 14°C - Máx.: 22°C</div>
-          <Graph temperaturas={temperaturasA}/>
+          <Graph temperaturas={temperaturasA}  />
           <div className="text-wrapper-69"id="tempAtu">20°C</div>
           <img className="sol-3" id="climaAtu" alt="Sol" src="/img/sol-2-1.png" />
           
@@ -209,7 +214,9 @@ export const Pagina = () => {
           <img className="icon-search" alt="Icon search" src="/img/icon-search.png" />
           <div className="porto-alegre-RS">Porto Alegre, RS,&nbsp;&nbsp;Brasil</div>
         </div>
+  
         <Citys onValueChange={handleValueChange} />
+        
         
     </div>
   );

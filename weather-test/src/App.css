@@ -1943,15 +1943,14 @@ html, body {
   white-space: nowrap;
   text-overflow: ellipsis; 
 }
+.tp-ac__item:hover, .tp-ac__item.is-active {
+  background-color: #335a8d; }
   .tp-ac__item:hover, .tp-ac__item.is-active {
     background-color: #335a8d; }
-  .tp-ac__item.no-results, .tp-ac__item.no-results:hover {
-    cursor: default;
-    background-color: #fff; }
-  .tp-ac__item span {
-    color: #e5e74b;
-    font-family: "Inter", Helvetica;
-    font-weight: bold; }
+    .tp-ac__item span {
+      color: rgb(197, 196, 196);
+      font-family: "Inter", Helvetica;
+      font-weight: bold; }
 
 @-webkit-keyframes spinner {
   to {
